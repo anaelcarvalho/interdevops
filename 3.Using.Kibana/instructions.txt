@@ -1,0 +1,27 @@
+###################################################################
+# FIRST STEPS WITH ELASTICSEARCH                                  #
+# Part 3: Using Kibana                                            #
+#                                                                 #
+# @author Anael Carvalho <anael.ferraz.carvalho@gmail.com>        #
+###################################################################
+
+1. Download
+--------------------------
+wget https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz
+tar -xvzf kibana-4.1.2-linux-x64.tar.gz
+
+2. Start Kibana
+--------------------------
+bin/kibana
+
+3. Open Kibana
+--------------------------
+Open http://localhost:5601 in browser
+
+4. Import sample configuration
+--------------------------
+At "Settings", select "Objects" and "Import". Choose file "sample_config.json".
+
+5. Check sample dashboards, visualizations and saved searches
+--------------------------
+At "Dashboard", select "Load Saved Dashboard" and choose one of the samples. At "Visualize", check existing objects at the bottom. At "Discover", select "Load Saved Search".

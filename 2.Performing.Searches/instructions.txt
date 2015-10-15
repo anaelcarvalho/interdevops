@@ -1,0 +1,72 @@
+###################################################################
+# FIRST STEPS WITH ELASTICSEARCH                                  #
+# Part 2: Performing Searches                                     #
+#                                                                 #
+# @author Anael Carvalho <anael.ferraz.carvalho@gmail.com>        #
+###################################################################
+
+1. URI Search 
+--------------------------
+- Find user with id of 0
+  curl -XGET 'http://localhost:9200/mydata/user/_search?q=user_id:0&pretty'
+- Get user by internal id
+  curl -XGET 'http://localhost:9200/mydata/user/{id}?pretty'
+- Get user by internal id and filter out unwanted fields
+  curl -XGET 'http://localhost:9200/mydata/user/{id}?_source=first_name,last_name,email&pretty'
+- Search for specific field
+  curl -XGET 'http://localhost:9200/mydata/user/_search?q=first_name:William&pretty'
+- Search for multiple fields
+  curl -XGET 'http://localhost:9200/mydata/user/_search?q=%2Bfirst_name%3AWilliam+%2Bcountry%3AArgentina&pretty'
+- Search in all fields
+  curl -XGET 'http://localhost:9200/mydata/user/_search?q=William&pretty'
+- Wildcard search
+  curl -XGET 'http://localhost:9200/mydata/user/_search?q=Will*&pretty'
+
+Q&A
+Q: Why did search match other fields when we did not provided a specific one?
+A: For every indexed document, Elasticsearch will create a special text field containing all document fields concatenated. It will use this for searching if no specific field is provided.
+
+2. Query DSL
+--------------------------
+- Search by specific field
+  curl -H "Content-Type: application/json" -v -XPOST -d '{"query": {"match": {"first_name": "William"}}}' http://localhost:9200/mydata/user/_search
+- Passing a request body in a GET request
+  curl -H "Content-Type: application/json" -v -XGET -d '{"query": {"match": {"first_name": "William"}}}' http://localhost:9200/mydata/user/_search?pretty
+
+- Bool Query: all users with "engineer" in their titles, who are not male. Rank by interest in "music" and birthday > 1980/01/01
+{
+  "bool": {
+    "must": { "match": { "job_title":"engineer" }},
+    "must_not": { "match": { "gender":"male" }},
+    "should": [
+      { "match": { "interests": "music"}},
+      { "range": { "birthday": { "gte":"1980/01/01" }}}
+    ]
+  }   
+}
+
+curl -H "Content-Type: application/json" -v -XPOST -d '{query:{"bool": {"must":{ "match": { "job_title":"engineer" }},"must_not": { "match": { "gender":"male" }},"should": [{ "match": { "interests": "music"}},{ "range": { "birthday": { "gte":"1980/01/01" }}}]}}}' 'http://localhost:9200/mydata/user/_search?pretty'
+
+- Next page
+curl -H "Content-Type: application/json" -v -XPOST -d '{query:{"bool": {"must":{ "match": { "job_title":"engineer" }},"must_not": { "match": { "gender":"male" }},"should": [{ "match": { "interests": "music"}},{ "range": { "birthday": { "gte":"1980/01/01" }}}]}}}' 'http://localhost:9200/mydata/user/_search?size=10&from=10&pretty'
+
+- Bool Query: same as previous, but change relevance:
+{
+  "bool": {
+    "must": { "match": { "job_title":"engineer" }},
+    "must_not": { "match": { "gender":"male" }},
+    "should": [
+      { "match": { "interests": {"query":"music", "boost":1}}},
+      { "range": { "birthday": { "gte":"1980/01/01", "boost":5}}}
+    ]
+  }   
+}
+
+curl -H "Content-Type: application/json" -v -XPOST -d '{query:{"bool": {"must": { "match": { "job_title":"engineer" }},"must_not": { "match": { "gender":"male" }},"should": [{ "match": { "interests": {"query":"music", "boost":1}}},{ "range": { "birthday": { "gte":"1980/01/01", "boost":5}}}]}}}' 'http://localhost:9200/mydata/user/_search?pretty'
+
+3. REFERENCES AND FURTHER READING
+--------------------------
+https://www.elastic.co/guide/en/elasticsearch/reference/current/search.html
+https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html
+
+

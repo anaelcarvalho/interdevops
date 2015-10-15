@@ -1,0 +1,56 @@
+###################################################################
+# FIRST STEPS WITH ELASTICSEARCH                                  #
+# Part 4: Using Logstash                                          #
+#                                                                 #
+# @author Anael Carvalho <anael.ferraz.carvalho@gmail.com>        #
+###################################################################
+
+1. Download
+--------------------------
+wget https://download.elastic.co/logstash/logstash/logstash-1.5.4.zip
+unzip logstash-1.5.4.zip
+
+2. Create configuration
+--------------------------
+vi logstash-apache.conf
+
+----
+input {
+  file {
+    path => "/tmp/access_log"
+    start_position => "beginning"
+  }
+}
+
+filter {
+  if [path] =~ "access" {
+    mutate { replace => { "type" => "apache_access" } }
+    grok {
+      match => { "message" => "%{COMBINEDAPACHELOG}" }
+    }
+  }
+  date {
+    match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+  }
+}
+
+output {
+  elasticsearch {
+    host => ["localhost:9200"]
+    protocol => "http"
+  }
+  stdout { codec => rubydebug }
+}
+----
+
+3. Generate some sample logs
+--------------------------
+python generate_log.py
+
+4. Run logstash
+--------------------------
+bin/logstash -f logstash-apache.conf
+
+5. Generate some more log entries
+--------------------------
+python generate_log.py

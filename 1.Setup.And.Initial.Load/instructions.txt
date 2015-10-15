@@ -1,0 +1,101 @@
+###################################################################
+# FIRST STEPS WITH ELASTICSEARCH                                  #
+# Part 1: Setup and Initial Load                                  #
+#                                                                 #
+# @author Anael Carvalho <anael.ferraz.carvalho@gmail.com>        #
+###################################################################
+
+1. Download Elastic Search
+--------------------------
+wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.zip
+unzip elasticsearch-1.7.2.zip
+
+2. Running Elastic Search
+--------------------------
+./bin/elasticsearch
+
+3. Checking cluster status
+--------------------------
+curl -XGET 'http://localhost:9200/'
+curl -XGET 'http://localhost:9200/_nodes?pretty'
+curl -XGET 'http://localhost:9200/_nodes/stats?pretty'
+curl -XGET 'http://localhost:9200/_cluster/health?pretty'
+
+4. Indexing our first document
+--------------------------
+curl -H "Content-Type: application/json" -v -XPOST -d '{"user_id":0,"gender":"Male","first_name":"Test","last_name":"User","username":"tuser0","password":"123123","email":"test@user.com","birthday":"1981/01/01","race":"Virtual","job_title":"Sample","company":"Test Company","city":"Userland","country":"Brazil","ip_address":"0.0.0.0","interests":["elasticsearch","kibana","logstash"]}' 'http://localhost:9200/mydata/user/'
+
+5. Checking cluster status again
+--------------------------
+curl -XGET 'http://localhost:9200/_cluster/health?pretty'
+
+Q&A
+Q: Why is there 5 active primary shards?
+A: Because a new index was created ("mydata") and by default, a new index has 5 shards
+
+Q: Why is my cluster yellow?
+A: Because we have only one instance - replicated shards are not assigned! Check unassigned_shards numbers.
+
+Q: Can I use an external id instead of having Elasticsearch generate one?
+A: Absolutely! Just use PUT HTTP method and pass internal id as URI param after type (e.g. PUT http://localhost:9200/mydata/user/12345)
+
+Q: How can I update a document?
+A: Use the same endpoint and method in the last answer above and pass updated document in the request body.
+
+Q: How can I delete a document?
+A: Use DELETE HTTP method and internal id (e.g. DELETE http://localhost:9200/mydata/user/12345)
+
+6. Checking index and mapping
+--------------------------
+curl -XGET 'http://localhost:9200/_stats?pretty'
+curl -XGET 'http://localhost:9200/mydata/_stats?pretty'
+
+curl -XGET 'http://localhost:9200/mydata/_mapping?pretty'
+curl -XGET 'http://localhost:9200/mydata/_mapping/user?pretty'
+
+Q&A
+Q: Where did the mapping come from?
+A: Elasticsearch will try to "guess" the correct types from the first indexed document in a new index, if no mapping was provided.
+
+Q: Can I create my own mappings manually?
+A: Sure! Use the PUT mapping endpoint (e.g. PUT http://localhost:9200/mydata/_mapping/user)
+
+Q: Can the mapping be updated?
+A: Only to add new fields! Because the data has already been indexed, you cannot change an existing mapping.
+
+Q: So what if I need to change the mapping?
+A: Define a new mapping and copy/move your data!
+
+7. Performing the first search
+--------------------------
+
+curl -XGET 'http://localhost:9200/mydata/user/_search?q=first_name:Test&pretty'
+
+8. Installing plugins
+--------------------------
+./bin/plugin -install mobz/elasticsearch-head
+
+9. Browsing HEAD plugin
+--------------------------
+Open http://localhost:9200/_plugin/head/ in the browser.
+
+10. Turning the cluster green
+--------------------------
+./bin/elasticsearch
+
+11. Spreading our shards
+--------------------------
+./bin/elasticsearch
+
+12. Sample data load
+--------------------------
+./import_data.sh
+
+13. REFERENCES AND FURTHER READING
+--------------------------
+https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html
+https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html
+https://www.elastic.co/guide/en/elasticsearch/reference/current/indices.html
+https://www.elastic.co/guide/en/elasticsearch/reference/current/docs.html
+https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html
+
