@@ -29,9 +29,9 @@ A: For every indexed document, Elasticsearch will create a special text field co
 2. Query DSL
 --------------------------
 - Search by specific field
-  curl -H "Content-Type: application/json" -v -XPOST -d '{"query": {"match": {"first_name": "William"}}}' http://localhost:9200/mydata/user/_search
+  curl -H "Content-Type: application/json" -v -XPOST -d '{"query": {"match": {"first_name": "William"}}}' 'http://localhost:9200/mydata/user/_search?pretty'
 - Passing a request body in a GET request
-  curl -H "Content-Type: application/json" -v -XGET -d '{"query": {"match": {"first_name": "William"}}}' http://localhost:9200/mydata/user/_search?pretty
+  curl -H "Content-Type: application/json" -v -XGET -d '{"query": {"match": {"first_name": "William"}}}' 'http://localhost:9200/mydata/user/_search?pretty'
 
 - Bool Query: all users with "engineer" in their titles, who are not male. Rank by interest in "music" and birthday > 1980/01/01
 {

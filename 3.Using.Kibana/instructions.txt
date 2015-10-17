@@ -25,3 +25,7 @@ At "Settings", select "Objects" and "Import". Choose file "sample_config.json".
 5. Check sample dashboards, visualizations and saved searches
 --------------------------
 At "Dashboard", select "Load Saved Dashboard" and choose one of the samples. At "Visualize", check existing objects at the bottom. At "Discover", select "Load Saved Search".
+
+6. REFERENCES AND FURTHER READING
+--------------------------
+https://www.elastic.co/guide/en/kibana/current/index.html

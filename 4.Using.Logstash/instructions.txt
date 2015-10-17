@@ -54,3 +54,11 @@ bin/logstash -f logstash-apache.conf
 5. Generate some more log entries
 --------------------------
 python generate_log.py
+
+6. Visualize in Kibana
+--------------------------
+Import "sample_config.json" and load Logstash dashboard
+
+6. REFERENCES AND FURTHER READING
+--------------------------
+https://www.elastic.co/guide/en/logstash/current/index.html

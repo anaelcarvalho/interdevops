@@ -23,11 +23,30 @@ curl -XGET 'http://localhost:9200/_cluster/health?pretty'
 
 4. Indexing our first document
 --------------------------
+{
+  "user_id":0,
+  "gender":"Male",
+  "first_name":"Test",
+  "last_name":"User",
+  "username":"tuser0",
+  "password":"123123",
+  "email":"test@user.com",
+  "birthday":"1981/01/01",
+  "race":"Virtual",
+  "job_title":"Sample",
+  "company":"Test Company",
+  "city":"Userland",
+  "country":"Brazil",
+  "ip_address":"0.0.0.0",
+  "interests":["elasticsearch","kibana","logstash"]
+}
+
 curl -H "Content-Type: application/json" -v -XPOST -d '{"user_id":0,"gender":"Male","first_name":"Test","last_name":"User","username":"tuser0","password":"123123","email":"test@user.com","birthday":"1981/01/01","race":"Virtual","job_title":"Sample","company":"Test Company","city":"Userland","country":"Brazil","ip_address":"0.0.0.0","interests":["elasticsearch","kibana","logstash"]}' 'http://localhost:9200/mydata/user/'
 
 5. Checking cluster status again
 --------------------------
 curl -XGET 'http://localhost:9200/_cluster/health?pretty'
+curl -XGET 'http://localhost:9200/_cluster/health?level=indices&pretty'
 
 Q&A
 Q: Why is there 5 active primary shards?
